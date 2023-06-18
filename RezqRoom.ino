@@ -1,13 +1,18 @@
-// Try this: https://gist.github.com/adi-g15/de41e96079a5b63045e86dc7c8c5c87e // to connect to ESP8266 when you actually get it idk
+// Try this: https://gist.github.com/adi-g15/de41e96079a5b63045e86dc7c8c5c87e 
+// to connect to ESP8266 when you actually get it idk
+
 #include <Arduino.h>
 #include <FirebaseESP8266.h>
 #include <ESP8266WiFi.h>
+#include <FastLED.h>
 
 #include "Keys.h"
 
-const char* ROOM = "BB8D7706-CB83-4339-918F-0E371D0AA36B";
+#define LED_PIN     1
+#define NUM_LEDS    20
 
-const int SENSOR_PIN = A0;
+
+const char* ROOM = "BB8D7706-CB83-4339-918F-0E371D0AA36B";
 
 enum RoomFeatures {
   NO_FEATURE=0b00000, LEDs=0b00001
@@ -24,14 +29,24 @@ struct RoomConfig {
   LEDStatus ledStatus;
 } room;
 
+CRGB leds[NUM_LEDS];
+
 void setup() {
   Serial.begin(115200);
 
   Serial.println("Configuring pins");
 
-  pinMode(SENSOR_PIN, INPUT);
+  pinMode(LED_PIN, OUTPUT);
 
   Serial.println("Done configuring pins");
+
+  printSeperationLine();
+
+  Serial.println("Configuring LEDs");
+
+  FastLED.addLeds<WS2812B, LED_PIN, GRB>(leds, NUM_LEDS);
+
+  Serial.println("Done configuring LEDs");
 
   printSeperationLine();
 
@@ -49,6 +64,21 @@ void loop() {
 
   // Query Firebase and update local config
   configureFromDB(&room);
+
+  for (int f = 0; f < 5; f++) {
+    RoomFeatures feature = room.features[f];
+    if (feature == LEDs) {
+      for (int l = 0; l < NUM_LEDS - 1; l++) {
+        if (room.ledStatus == OFF) {
+          leds[l] = CRGB(0, 0, 0);
+        } else if (room.ledStatus == WHITE) {
+          leds[l] = CRGB(255, 255, 255);
+        }
+      }
+
+      FastLED.show();
+    }
+  }
 
   delay(500); // 0.5s loop times (ideal. Assumes not blocked by trying to connect to wifi)
 }
