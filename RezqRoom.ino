@@ -12,7 +12,7 @@
 #define NUM_LEDS    20
 
 
-const char* ROOM = "BB8D7706-CB83-4339-918F-0E371D0AA36B";
+const String ROOM = "BB8D7706-CB83-4339-918F-0E371D0AA36B";
 
 enum RoomFeatures {
   NO_FEATURE=0b00000, LEDs=0b00001
@@ -39,7 +39,7 @@ void setup() {
   pinMode(LED_PIN, OUTPUT);
 
   Serial.println("Done configuring pins");
-
+    
   printSeperationLine();
 
   Serial.println("Configuring LEDs");
@@ -134,8 +134,7 @@ void configureFromDB(RoomConfig * config) {
   for (int i = 0; i < 5; i++) {
     config->features[i] = NO_FEATURE;
   }
-
-  if (Firebase.getInt(firebaseData, "features") && firebaseData.dataTypeEnum() == fb_esp_rtdb_data_type_integer) {
+  if (Firebase.getInt(firebaseData, ROOM + "/features") && firebaseData.dataTypeEnum() == fb_esp_rtdb_data_type_integer) {
     config->featuresBitmask = firebaseData.to<int>();
 
     // Check what features the featuresBitmask (bit representation of all the 5 possible features) stores
@@ -147,7 +146,7 @@ void configureFromDB(RoomConfig * config) {
     }
   }
 
-  if (Firebase.getInt(firebaseData, "ledStatus") && firebaseData.dataTypeEnum() == fb_esp_rtdb_data_type_integer) {
+  if (Firebase.getInt(firebaseData, ROOM + "/ledStatus") && firebaseData.dataTypeEnum() == fb_esp_rtdb_data_type_integer) {
     config->ledStatus = static_cast<LEDStatus>(firebaseData.to<int>());
   } else {
     config->ledStatus = OFF;

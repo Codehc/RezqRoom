@@ -113,3 +113,6 @@ tags
 Keys.h
 
 build/
+
+# vim swp files
+*.swp
