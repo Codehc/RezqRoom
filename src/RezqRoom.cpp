@@ -6,28 +6,11 @@
 #include <ESP8266WiFi.h>
 #include <FastLED.h>
 
+#include "RezqRoom.h"
 #include "Keys.h"
-
-#define LED_PIN     1
-#define NUM_LEDS    20
 
 
 const String ROOM = "BB8D7706-CB83-4339-918F-0E371D0AA36B";
-
-enum RoomFeatures {
-  NO_FEATURE=0b00000, LEDs=0b00001
-};
-
-enum LEDStatus {
-  OFF=0,
-  WHITE=1
-};
-
-struct RoomConfig {
-  int featuresBitmask;
-  RoomFeatures features[5];
-  LEDStatus ledStatus;
-} room;
 
 CRGB leds[NUM_LEDS];
 

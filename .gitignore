@@ -116,3 +116,10 @@ build/
 
 # vim swp files
 *.swp
+
+### PlatformIO ###
+.pioenvs
+.piolibdeps
+.clang_complete
+.gcc-flags.json
+.pio
